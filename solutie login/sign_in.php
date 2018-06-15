@@ -5,42 +5,31 @@ $no_email_warning = ""; // initialize with no alert
 require 'reading_from_file.php';
 
 //compare cookie with existing users in external file
-if(isset($_COOKIE['email']) && isset($_COOKIE['pass']) && getData($_COOKIE['email'], $_COOKIE['pass']) == true){
-  redirect("site.php");
-  exit();
-}
+
 if(isset($_POST['submit'])){
   if(strlen($_POST['email']) != 0 && strlen($_POST['pass']) != 0){
     $hash_password = md5($salt.$_POST['pass']);
-    if(getData($_POST['email'], $hash_password) == true ){
       $_SESSION["user"] = $_POST["email"];
-      if($_POST['remember'] == 'on'){
-        setcookie('email' , $_POST['email'] , time() + 30);
-        setcookie('pass' , $hash_password , time() + 30);
-        redirect("site.php");
-        exit();
-
-      }else {
-            redirect("site.php");
-            exit();
-      }
-    }else{
-      $no_email_warning = '<div class="alert alert-danger" role="alert">
-      Could not log in. Please sign in first!
-      </div>';
+    if($_POST['remember'] == 'on' ){
+      setcookie('email' , $_POST['email'] , time() + 30);
+      setcookie('pass' , $hash_password , time() + 30);
+      setData($_POST['email'], $hash_password );
+      redirect("site.php");
+      exit();
+    }else {
+      setData($_POST['email'], $hash_password);
+      redirect("site.php");
+      exit();
     }
   }else $no_email_warning = '<div class="alert alert-danger" role="alert">
-  Could not log in. User or Password field empty!
+  Could not sign in in. User or Password field empty!
   </div>';
   // show alert if no user or password written
-
-
 }
 
 function redirect($site){
   header("Location: $site");
 }
-
  ?>
 <!doctype html>
 <html lang="en">
@@ -63,7 +52,7 @@ function redirect($site){
 
       }
     </style>
-    <title>Log In</title>
+    <title>Sign in</title>
   </head>
   <body>
     <?php include("header_template.php") ?>
@@ -86,10 +75,8 @@ function redirect($site){
             <input type="checkbox" name = "remember" class="form-check-input" id="exampleCheck1">
             <label class="form-check-label" for="exampleCheck1">Remember me!</label>
           </div>
-          <button type="submit" name="submit" class="btn btn-primary" id="log-in">Log in</button>
+          <button type="submit" name="submit" class="btn btn-primary" id="log-in">Sign in</button>
         </form>
-        <a href="sign_in.php" ><p>Not a registered user yet? Please click to sign in</p>
-        </a>
     </div>
     <?php include 'footer_template.php'; ?>
 

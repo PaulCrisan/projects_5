@@ -1,3 +1,22 @@
+<?php
+session_start();
+$logged_user = $_SESSION['user'];
+if(isset($_COOKIE['email'])){
+  $mail = $_COOKIE['email'];
+  $usergreeting = "<h1>Welcome $mail </h1>";
+}
+if(isset($_POST['submit'])){
+  setcookie("email","",time()-1);
+  setcookie("password","",time()-1);
+  session_unset();
+  session_destroy(); 
+  header("Location: log_in.php");
+  exit();
+}
+
+
+ ?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -11,7 +30,18 @@
     <title>my site</title>
   </head>
   <body>
-    <h1>Hello to this incredible empty site!!! </h1>
+    <div class="">
+      <h5 style="position:absolute; margin:20px;" >Signed in as: <?php echo $logged_user ?></h5>
+    </div>
+    <?php include "header_template.php"; ?>
+    <div class="container">
+      <?php echo $usergreeting ?>
+      <form class="" method="post">
+        <button type="submit" name="submit" class="btn btn-primary">Log out</button>
+      </form>
+
+    </div>
+    <?php include 'footer_template.php'; ?>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
